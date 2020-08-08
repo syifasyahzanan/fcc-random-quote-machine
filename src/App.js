@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { random } from 'lodash';
 import 'typeface-roboto';
 import Grid from '@material-ui/core/Grid';
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from '@material-ui/core/styles';
 import HadithMachine from './components/HadithMachine';
 
 const styles = {
@@ -18,9 +18,13 @@ class App extends Component {
     super(props);
     this.state = {
       hadith: [],
-      selectedHadithIndex: null
+      selectedHadithIndex: null,
+      themeColor: 'pink',
+      colorArray: ['#2F5682','#515F94','#7468A2','#976FAC','#BA76B1','#DB7EB1','#007CA4','#00A3AF','#00C6A0','#6587B7','#4A4E8D','#952C54','#77E9B3','#952C54','#CF6185','#828310','#4D9F43','#B492AD'],
     }
-    this.assignNewHadithIndex = this.assignNewHadithIndex.bind(this)
+    this.assignNewColorIndex = this.assignNewColorIndex.bind(this)
+    this.generateNewColorIndex= this.generateNewColorIndex.bind(this)
+    this.assignNewHadithIndex = this.assignNewHadithIndex.bind(this);
     this.generateNewHadithIndex = this.generateNewHadithIndex.bind(this);
   }
 
@@ -44,24 +48,59 @@ class App extends Component {
     return random(0, this.state.hadith.length - 1);
   }
 
-  assignNewHadithIndex () {
-    this.setState({ selectedHadithIndex: this.generateNewHadithIndex() })
+  assignNewHadithIndex() {
+    this.setState({ 
+      selectedHadithIndex: this.generateNewHadithIndex()
+    });
   }
+
+
+/*
+ * This code for generating random color 
+ */
+  generateNewColorIndex() {
+    if (!this.state.colorArray.length) {
+      return undefined;
+    }
+    return random(0, this.state.colorArray.length - 1)
+  }
+
+  assignNewColorIndex() {
+    this.setState({
+      themeColor: this.state.colorArray[this.generateNewColorIndex()]
+    })
+  }
+
+  get generateNewColor() {
+    if (!this.state.colorArray.length) {
+      return undefined;
+    }
+    return this.state.colorArray[this.generateNewColorIndex()]
+  }
+
 
 
   render() {
     return (
-      <Grid className={this.props.classes.container} id="quote-box" justify="center" container>
-        <Grid xs={11} lg={4} item>
-          {
-            this.generateNewHadith
-            ? <HadithMachine generateNewHadith={this.generateNewHadith} assignNewHadithIndex={this.assignNewHadithIndex} />
-            : null
-          }
+      <div style={{backgroundColor: "pink"}}
+           id="bg"
+           >
+        <Grid className={this.props.classes.container}
+              id="quote-box"
+              justify="center"
+              container>
+            <Grid xs={11} lg={7} item>
+              {
+                this.generateNewHadith
+                ? <HadithMachine generateNewHadith={this.generateNewHadith} assignNewHadithIndex={this.assignNewHadithIndex} generateNewColor={this.generateNewColor} assignNewColorIndex={this.assignNewColorIndex} />
+                : null
+              }
+            </Grid>
         </Grid>
-      </Grid>
+      </div>
     );
   }
 }
+
 
 export default withStyles(styles)(App);
